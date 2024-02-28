@@ -1,7 +1,7 @@
 import copy
 from matrix import transport_matrix
 from meth_end_point_search import solve_brute_force, mult_vec
-
+from simplex_method import find_start_bas
 """
 Чтение файла. Сохраняем систему.
 Предполагается, что в строке, начинающейся с goal_gunc, записана целевая функция.
@@ -227,6 +227,15 @@ solution = solve_brute_force(A, b, goal_func2)
 print('Вектор решения: ', solution)
 print('', mult_vec(solution, goal_func2))
 
+
 print('---РЕШЕНИЕ ИСХОДНОЙ ЗАДАЧИ СИМПЛЕКС-МЕТОДОМ---')
-# solution = simplex(goal_func, A, b)
-# print('Вектор решения: ', solution)
+A, b = getAb(system_c)
+solution = find_start_bas(A, b, goal_func_c)
+print('Вектор решения: ', solution)
+print('', mult_vec(solution, goal_func_c))
+
+print('---РЕШЕНИЕ ДВОЙСТВЕННОЙ ЗАДАЧИ СИМПЛЕКС-МЕТОДОМ---')
+A, b = getAb(system2)
+solution = find_start_bas(A, b, goal_func2)
+print('Вектор решения: ', solution)
+print('', mult_vec(solution, goal_func2))

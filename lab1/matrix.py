@@ -1,12 +1,12 @@
 import copy
-
+import numpy as np
 
 def alg_dop(A: list, i: int, j: int):
     M = len(A)
     Mi = [item for item in range(M) if item != i]  # индексы строк
     Mj = [item for item in range(M) if item != j]  # индексы столбцов
     new_matr_ = new_matr(A, Mi, Mj)
-    minor_ = determinant(new_matr_)
+    minor_ = np.linalg.det(new_matr_)
     alg_dop_ = (-1) ** (i + j) * minor_
     return alg_dop_
 
@@ -14,7 +14,7 @@ def alg_dop(A: list, i: int, j: int):
 def inversion_matrix(A: list):
     """Поиск обратной матрицы"""
     matr_alg_dop_ = [[0 for _ in range(len(A))] for _ in range(len(A))]
-    det_A = determinant(A)
+    det_A = np.linalg.det(np.array(A))
     if det_A == 0:
         return []
     for i in range(len(A)):
@@ -48,7 +48,7 @@ def determinant(a):
     per = 0  # количество пересатновок в матрице
     k = 0
     while k <= n - 1:
-        if matr[k][k] == 0:  # перемещение строки, если у неё нулевые элементы на диагонали
+        if abs(matr[k][k]) == 0:  # перемещение строки, если у неё нулевые элементы на диагонали
             id_, flag = find_nonull_(matr, k)
             if not flag:
                 return 0
@@ -58,9 +58,7 @@ def determinant(a):
             per += 1
             continue
         k += 1
-
     for k in range(0, n):
-
         for i in range(k + 1, n):
             if matr[i][k] != 0.0:
                 # Если не нулевой диагональный элемент, то вычисляем лямбду
@@ -151,11 +149,9 @@ def new_matr(matr: list, list_col: list, list_row: list):
 
 
 def new_vec(vec: list, list_el: list):
-    new_vec_ = [0 for _ in range(len(list_el))]
-    i = 0
+    new_vec_ = []
     for k in list_el:
-        new_vec_[i] = vec[k]
-        i += 1
+        new_vec_.append(vec[k])
     return new_vec_
 
 
@@ -168,7 +164,7 @@ def mult_vec(a: list, b: list):
 
 
 def mult_matr(A: list, B: list):
-    """Произведение матриц"""
+    """Произведение матриц B на A"""
     mult_matr_ = [[0 for _ in range(len(A[0]))] for _ in range(len(B))]
     new_A_transp = transport_matrix(A)
     for i in range(len(B)):
@@ -202,7 +198,3 @@ def mult_scal_vec(scale: float, u: list):
     return new_vec_
 
 
-A = [[1,2,0], [4,5,6], [7,8,9]]
-b = [1, 2, 3]
-print(determinant(A))
-print(inversion_matrix(A))

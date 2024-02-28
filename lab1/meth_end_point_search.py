@@ -29,7 +29,7 @@ def get_basis_matrs(A: list):
 
     for list_col in combination(all_indexes, M):
         basis_matr = matrix_by_id_col(A, list_col)
-        det = determinant(basis_matr)
+        det = np.linalg.det(basis_matr)
         if abs(det) > EPS:  # проверяем, что определитель отличен от нуля
             basis_matrs.append(basis_matr)  # получаем все такие матрицы и индексы комбинаций записываем
             basis_combinations_indexes.append(list_col)
@@ -61,7 +61,7 @@ def get_all_possible_vectors(A: list, b: list):
 
     for i in range(len(basis_matrs)):  # Для всех матриц с ненулевым определителем
 
-        solve = gaussMeth(basis_matrs[i], b)  # Решаем систему вида A[M,N_k]*x[N_k]=b[M]
+        solve = np.linalg.solve(basis_matrs[i], b)  # Решаем систему вида A[M,N_k]*x[N_k]=b[M]
         if not validation_vec(solve):
             continue
 
@@ -72,7 +72,6 @@ def get_all_possible_vectors(A: list, b: list):
             k += 1
         vectors.append(vec)
     return vectors
-
 
 
 def solve_brute_force(A: list, b: list, c: list):
