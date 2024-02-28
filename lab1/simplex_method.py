@@ -5,6 +5,15 @@ from tabulate import tabulate
 from matrix import *
 
 
+def sum_(c: list, A: list, i: int, basis: list):
+    s = 0
+    k = 0
+    for j in basis:
+        s += c[j] * A[k][i]
+        k += 1
+    return s
+
+
 def delta(c: list, A: list, N: list, L: list, Nk: list):
     """
     Вычисление дельта-оценки
@@ -16,23 +25,13 @@ def delta(c: list, A: list, N: list, L: list, Nk: list):
     :param M: список индексов строк
     :return: вектор дельта-оценки
     """
+    delta_list = [0 for _ in range(len(N))]
 
-    new_A_ = matrix_by_id_col(A, Nk)  # создайм матрицу, к которой будем искать обратную
-    B = inversion_matrix(new_A_)
-    print(L)
-    d = [0 for _ in range(len(N))]
-    new_A = matrix_by_id_col(A, L)
-    print(new_A)
-    BA = mult_matr(new_A, B)
-    new_c = new_vec(c, Nk)
-    cBA = mult_vec_matr(new_c, BA)
-    cL = new_vec(c, L)
-    dL = diff_vec(cL, cBA)
-    j = 0
-    for i in L:
-        d[i] = dL[j]
-        j += 1
-    return d
+    for i in N:
+        del_ = c[i] - sum_(c, A, i, Nk)
+        delta_list[i] = del_
+
+    return delta_list
 
 
 def validation_a_delta(delta_: list, A: list, Lk: list):
@@ -276,9 +275,19 @@ def find_start_bas(A: list, b: list, c: list):
             continue
         bas_.append(i)
 
-    print(basis_new)
-    print(xk)
-    print(xxy)
+    new_A = matrix_by_id_col(A, bas_)
+    det_nA = np.linalg.det(new_A)
+    if det_nA == 0: #смена базиса
+        for i in N_Np:
+            if i in bas_:
+                for j in N_Np:
+                    if i != j:
+                        bas_.remove(i)
+                        bas_.append(j)
+                    new_A = matrix_by_id_col(new_A, bas_)
+                    det_nA = np.linalg.det(new_A)
+                    if det_nA == 0:
+                        break
     print(bas_)
     print("---ПОИСК ОПТИМАЛЬНОГО ВЕКТОРА---")
     xopt, bas = simplex(A, c, xk, bas_)
